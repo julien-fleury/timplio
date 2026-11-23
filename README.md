@@ -1,5 +1,9 @@
 # Timplio
 
+<p align="center">
+  <img src="src/renderer/src/assets/timplio-logo.png" alt="Logo Timplio" width="520">
+</p>
+
 Application de bureau locale pour suivre les affaires, les pointages et la rentabilité.
 
 ## Fonctions principales
