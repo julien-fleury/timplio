@@ -1,9 +1,9 @@
 {
-  "name": "cms-temps",
-  "version": "1.3.0",
+  "name": "timplio",
+  "version": "2.0.0",
   "description": "Suivi local des temps et de la rentabilité des affaires",
   "main": "dist-electron/main/index.js",
-  "author": "CMS Temps",
+  "author": "Timplio",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -42,12 +42,12 @@
     "wait-on": "latest"
   },
   "build": {
-    "appId": "fr.cmstemps.app",
-    "productName": "CMS Temps",
+    "appId": "fr.timplio.app",
+    "productName": "Timplio",
     "directories": { "output": "release" },
     "files": ["dist/**/*", "dist-electron/**/*", "package.json"],
-    "mac": { "target": ["dmg", "zip"], "category": "public.app-category.business" },
-    "win": { "target": [{ "target": "nsis", "arch": ["x64"] }] },
+    "mac": { "target": ["dmg", "zip"], "category": "public.app-category.business", "icon": "resources/icon.png" },
+    "win": { "target": [{ "target": "nsis", "arch": ["x64"] }], "icon": "resources/icon.png" },
     "nsis": { "oneClick": false, "allowToChangeInstallationDirectory": true, "createDesktopShortcut": true }
   }
 }

@@ -3,7 +3,9 @@ import path from 'node:path';
 import fs from 'node:fs';
 import * as XLSX from 'xlsx';
 import { DatabaseManager } from './database/index.js';
+import { migrateLegacyData } from './database/legacy-migration.js';
 import { DataService } from './services/data-service.js';
+import { BRAND } from '../shared/branding.js';
 import type { AffaireInput, Categorie, PointageInput } from '../shared/types.js';
 
 let mainWindow: BrowserWindow | null = null;
@@ -23,7 +25,7 @@ function reportHtml(service: DataService, affaireId: number): string | null {
   </style></head><body><div class="header"><div><h1>${escapeHtml(affaire.nom)}</h1><div class="muted">${escapeHtml(affaire.client)}</div></div><div><b>${affaire.terminee ? 'Terminée' : 'En cours'}</b><br><span class="muted">Édité le ${new Date().toLocaleDateString('fr-FR')}</span></div></div>
   <div class="stats"><div class="stat">Prix vendu HT<b>${euro(affaire.montantVenduHt)}</b></div><div class="stat">Heures consommées<b>${number(affaire.heuresConsommees)} h</b></div><div class="stat">Crédit heures<b class="${affaire.creditRestantHeures < 0 ? 'negative' : ''}">${number(affaire.creditRestantHeures)} h</b></div><div class="stat">Taux réel<b>${affaire.tauxHoraireReel ? `${euro(affaire.tauxHoraireReel)}/h` : '—'}</b></div></div>
   <h2>Budget par catégorie</h2><table><thead><tr><th>Catégorie</th><th>Prévu</th><th>Consommé</th><th>Restant</th></tr></thead><tbody>${budgets.map((budget) => `<tr><td>${escapeHtml(budget.categorie)}</td><td>${number(budget.heuresPrevues)} h</td><td>${number(budget.heuresConsommees)} h</td><td class="${budget.heuresRestantes < 0 ? 'negative' : ''}">${number(budget.heuresRestantes)} h</td></tr>`).join('') || '<tr><td colspan="4">Aucun budget détaillé</td></tr>'}</tbody></table>
-  <h2>Historique des pointages</h2><table><thead><tr><th>Date</th><th>Heures</th><th>Catégorie</th><th>Commentaire</th></tr></thead><tbody>${pointages.map((pointage) => `<tr><td>${escapeHtml(pointage.date)}</td><td>${number(pointage.heures)} h</td><td>${escapeHtml(pointage.categorie)}</td><td>${escapeHtml(pointage.commentaire)}</td></tr>`).join('') || '<tr><td colspan="4">Aucun pointage</td></tr>'}</tbody></table><div class="footer">Rapport généré localement par CMS Temps.</div></body></html>`;
+  <h2>Historique des pointages</h2><table><thead><tr><th>Date</th><th>Heures</th><th>Catégorie</th><th>Commentaire</th></tr></thead><tbody>${pointages.map((pointage) => `<tr><td>${escapeHtml(pointage.date)}</td><td>${number(pointage.heures)} h</td><td>${escapeHtml(pointage.categorie)}</td><td>${escapeHtml(pointage.commentaire)}</td></tr>`).join('') || '<tr><td colspan="4">Aucun pointage</td></tr>'}</tbody></table><div class="footer">Rapport généré localement par ${BRAND.name}.</div></body></html>`;
 }
 
 const normalizeDate = (value: unknown): string => {
@@ -39,7 +41,7 @@ function createWindow(): void {
   mainWindow = new BrowserWindow({
     width: 1440, height: 900, minWidth: 1080, minHeight: 700,
     backgroundColor: '#f4f6f8',
-    title: 'CMS Temps',
+    title: BRAND.name,
     webPreferences: { preload: path.join(__dirname, 'preload.js'), contextIsolation: true, nodeIntegration: false },
   });
   const devUrl = process.env.VITE_DEV_SERVER_URL;
@@ -66,7 +68,7 @@ function registerHandlers(service: DataService): void {
   ipcMain.handle('categories:remove', (_e, id: number, remplacementId?: number) => service.removeCategorie(id, remplacementId));
   ipcMain.handle('dashboard', () => service.dashboard());
   ipcMain.handle('export:excel', async () => {
-    const result = await dialog.showSaveDialog(mainWindow!, { title: 'Exporter les données', defaultPath: 'CMS-Temps-export.xlsx', filters: [{ name: 'Classeur Excel', extensions: ['xlsx'] }] });
+    const result = await dialog.showSaveDialog(mainWindow!, { title: 'Exporter les données', defaultPath: `${BRAND.name}-export.xlsx`, filters: [{ name: 'Classeur Excel', extensions: ['xlsx'] }] });
     if (result.canceled || !result.filePath) return null;
     const affaires = service.listAffaires().map(({ prevision, ...affaire }) => ({ ...affaire, ...prevision }));
     const pointages = service.listPointages();
@@ -136,7 +138,7 @@ function registerHandlers(service: DataService): void {
     } finally { reportWindow.destroy(); }
   });
   ipcMain.handle('database:backup', async () => {
-    const result = await dialog.showSaveDialog(mainWindow!, { title: 'Sauvegarder la base', defaultPath: `CMS-Temps-${new Date().toISOString().slice(0, 10)}.sqlite`, filters: [{ name: 'Base SQLite', extensions: ['sqlite'] }] });
+    const result = await dialog.showSaveDialog(mainWindow!, { title: 'Sauvegarder la base', defaultPath: `${BRAND.name}-${new Date().toISOString().slice(0, 10)}.sqlite`, filters: [{ name: 'Base SQLite', extensions: ['sqlite'] }] });
     if (result.canceled || !result.filePath) return null;
     await manager.backup(result.filePath);
     return result.filePath;
@@ -149,12 +151,19 @@ function registerHandlers(service: DataService): void {
   });
 }
 
-app.whenReady().then(() => {
-  manager = new DatabaseManager(path.join(app.getPath('userData'), 'cms-temps.sqlite'));
-  void manager.automaticBackup(path.join(app.getPath('userData'), 'backups')).catch((error) => console.error('Sauvegarde automatique impossible', error));
+app.whenReady().then(async () => {
+  const userDataDirectory = app.getPath('userData');
+  const migration = await migrateLegacyData(app.getPath('appData'), userDataDirectory);
+  if (migration.databaseMigrated) console.info(`Données historiques importées depuis ${migration.source}`);
+  manager = new DatabaseManager(path.join(userDataDirectory, BRAND.databaseFile));
+  void manager.automaticBackup(path.join(userDataDirectory, 'backups')).catch((error) => console.error('Sauvegarde automatique impossible', error));
   registerHandlers(new DataService(() => manager.db));
   createWindow();
   app.on('activate', () => { if (BrowserWindow.getAllWindows().length === 0) createWindow(); });
+}).catch((error: unknown) => {
+  console.error('Démarrage impossible', error);
+  dialog.showErrorBox(`Démarrage de ${BRAND.name} impossible`, error instanceof Error ? error.message : String(error));
+  app.quit();
 });
 
 app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(); });

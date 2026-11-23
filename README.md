@@ -1,4 +1,4 @@
-# CMS Temps
+# Timplio
 
 Application de bureau locale pour suivre les affaires, les pointages et la rentabilité.
 
@@ -48,21 +48,23 @@ Sur Windows 10 ou 11, double-cliquer sur `INSTALLER-WINDOWS.cmd`. Le lanceur :
 4. génère l’installeur Windows 64 bits ;
 5. ouvre l’Explorateur sur le fichier `.exe` obtenu dans `release`.
 
-Cette préparation nécessite une connexion Internet. Elle utilise normalement Windows Package Manager (`winget`) ; si sa source est indisponible, le lanceur télécharge automatiquement `fnm` depuis sa publication GitHub officielle. L’utilisateur final de CMS Temps n’a besoin que de l’installeur `.exe` produit.
+Cette préparation nécessite une connexion Internet. Elle utilise normalement Windows Package Manager (`winget`) ; si sa source est indisponible, le lanceur télécharge automatiquement `fnm` depuis sa publication GitHub officielle. L’utilisateur final de Timplio n’a besoin que de l’installeur `.exe` produit.
 
-Depuis la version 1.0.3, SQLite est fourni directement par Electron : Python et Visual Studio Build Tools ne sont pas nécessaires pour compiler l’application sous Windows.
+SQLite est fourni directement par Electron : Python et Visual Studio Build Tools ne sont pas nécessaires pour compiler l’application sous Windows.
 
 ## Données
 
 La base SQLite est créée au premier lancement dans le dossier `userData` d’Electron. L’écran **Données** permet l’export Excel, la sauvegarde et la restauration de la base.
 
+Lors du premier lancement de Timplio, une éventuelle base de l’ancienne application **CMS Temps** est copiée automatiquement avec ses sauvegardes quotidiennes. Les fichiers historiques sont conservés par sécurité.
+
 ## Versions locales avec Git
 
 Le projet est suivi dans un dépôt Git local. Avant de produire une nouvelle mise à jour :
 
-1. modifier le numéro `version` dans `package.json` (`1.0.1`, `1.0.2`, etc.) ;
+1. modifier le numéro `version` dans `package.json` (par exemple `2.0.1`) ;
 2. vérifier puis enregistrer les changements avec `git add .` et `git commit` ;
-3. créer un repère avec `git tag v1.0.1` ;
+3. créer un repère correspondant (par exemple `git tag v2.0.1`) ;
 4. générer le nouvel installateur avec `INSTALLER-WINDOWS.cmd`.
 
 Les fichiers de compilation, les dépendances et les bases SQLite sont exclus du dépôt.

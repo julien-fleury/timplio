@@ -20,7 +20,7 @@ export function AffaireFormModal({ affaire, onClose, onSaved }: { affaire?: Affa
     if (!form.nom.trim() || !form.client.trim()) return setError('Le nom et le client sont obligatoires.');
     if (form.montantVenduHt < 0 || form.tauxHoraireReference <= 0) return setError('Les montants saisis ne sont pas valides.');
     setSaving(true);
-    try { if (affaire) await window.cms.affaires.update(affaire.id, form); else await window.cms.affaires.create(form); onSaved(); }
+    try { if (affaire) await window.timplio.affaires.update(affaire.id, form); else await window.timplio.affaires.create(form); onSaved(); }
     catch { setError("Impossible d'enregistrer l'affaire."); setSaving(false); }
   };
 

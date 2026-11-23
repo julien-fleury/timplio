@@ -90,7 +90,7 @@ export interface DashboardData {
 
 export interface ImportResult { affaires: number; pointages: number; }
 
-export interface CmsApi {
+export interface TimplioApi {
   affaires: {
     list: () => Promise<AffaireAvecStats[]>;
     get: (id: number) => Promise<AffaireAvecStats | null>;

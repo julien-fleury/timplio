@@ -13,7 +13,7 @@ export function CategoriesPage() {
   const [busy, setBusy] = useState(false);
 
   const load = async () => {
-    const rows = await window.cms.categories.list();
+    const rows = await window.timplio.categories.list();
     setItems(rows);
     setNames(Object.fromEntries(rows.map((item) => [item.id, item.nom])));
   };
@@ -23,13 +23,13 @@ export function CategoriesPage() {
   const message = (value: unknown) => value instanceof Error ? value.message.replace(/^Error invoking remote method '[^']+': /, '') : 'Une erreur est survenue.';
   const add = async (event: FormEvent) => {
     event.preventDefault(); setError(''); setBusy(true);
-    try { await window.cms.categories.create(newName); setNewName(''); await load(); }
+    try { await window.timplio.categories.create(newName); setNewName(''); await load(); }
     catch (reason) { setError(message(reason)); }
     finally { setBusy(false); }
   };
   const rename = async (item: CategorieTravail) => {
     setError(''); setBusy(true);
-    try { await window.cms.categories.rename(item.id, names[item.id] ?? ''); await load(); }
+    try { await window.timplio.categories.rename(item.id, names[item.id] ?? ''); await load(); }
     catch (reason) { setError(message(reason)); }
     finally { setBusy(false); }
   };
@@ -38,7 +38,7 @@ export function CategoriesPage() {
     if (item.usagePointages + item.usageBudgets === 0) {
       if (!confirm(`Supprimer la catégorie « ${item.nom} » ?`)) return;
       setBusy(true);
-      try { await window.cms.categories.remove(item.id); await load(); }
+      try { await window.timplio.categories.remove(item.id); await load(); }
       catch (reason) { setError(message(reason)); }
       finally { setBusy(false); }
       return;
@@ -50,7 +50,7 @@ export function CategoriesPage() {
     if (!replacementId) return setError('Choisissez une catégorie de remplacement.');
     if (!confirm(`Remplacer les usages de « ${item.nom} », puis supprimer cette catégorie ?`)) return;
     setError(''); setBusy(true);
-    try { await window.cms.categories.remove(item.id, replacementId); setDeletingId(null); await load(); }
+    try { await window.timplio.categories.remove(item.id, replacementId); setDeletingId(null); await load(); }
     catch (reason) { setError(message(reason)); }
     finally { setBusy(false); }
   };

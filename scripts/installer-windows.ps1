@@ -104,7 +104,7 @@ try {
     Invoke-Checked npm install --global pnpm@latest
     Write-Host "pnpm $(& pnpm --version) actif." -ForegroundColor Green
 
-    Write-Step 'Installation des dépendances de CMS Temps'
+    Write-Step 'Installation des dépendances de Timplio'
     Invoke-Checked pnpm install
 
     Write-Step 'Vérification du code TypeScript'

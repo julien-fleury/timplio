@@ -10,7 +10,7 @@ afterEach(() => { for (const file of files.splice(0)) { for (const suffix of [''
 
 describe('migrations SQLite', () => {
   it('met à niveau une base 1.0 sans supprimer ses données', () => {
-    const file = path.join(os.tmpdir(), `cms-temps-migration-${Date.now()}.sqlite`); files.push(file);
+    const file = path.join(os.tmpdir(), `timplio-migration-${Date.now()}.sqlite`); files.push(file);
     const legacy = new DatabaseSync(file);
     legacy.exec(`CREATE TABLE affaires (id INTEGER PRIMARY KEY, nom TEXT, client TEXT, montant_vendu_ht REAL, taux_horaire_reference REAL, date_creation TEXT, date_cloture TEXT, terminee INTEGER, commentaire TEXT);
       CREATE TABLE pointages (id INTEGER PRIMARY KEY, affaire_id INTEGER, date TEXT, heures REAL, categorie TEXT, commentaire TEXT);

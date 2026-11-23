@@ -11,7 +11,7 @@ import { formatEuro, formatNumber } from '../lib/format';
 type Filter = 'toutes' | 'encours' | 'terminees';
 export function AffairesPage() {
   const [items, setItems] = useState<AffaireAvecStats[]>([]); const [query, setQuery] = useState(''); const [filter, setFilter] = useState<Filter>('toutes'); const [modal, setModal] = useState(false); const navigate = useNavigate();
-  const load = () => window.cms.affaires.list().then(setItems);
+  const load = () => window.timplio.affaires.list().then(setItems);
   useEffect(() => { void load(); }, []);
   const visible = useMemo(() => items.filter((a) => (filter === 'toutes' || (filter === 'terminees' ? a.terminee : !a.terminee)) && `${a.nom} ${a.client}`.toLowerCase().includes(query.toLowerCase())), [items, query, filter]);
   return <>

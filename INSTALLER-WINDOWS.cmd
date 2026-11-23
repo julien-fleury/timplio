@@ -1,17 +1,17 @@
 @echo off
 setlocal
-title Preparation de CMS Temps pour Windows
+title Preparation de Timplio pour Windows
 
 echo ============================================================
-echo   CMS Temps - Preparation et creation de l'installateur
+echo   Timplio - Preparation et creation de l'installateur
 echo ============================================================
 echo.
 
 powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "%~dp0scripts\installer-windows.ps1"
-set "CMS_EXIT_CODE=%ERRORLEVEL%"
+set "TIMPLIO_EXIT_CODE=%ERRORLEVEL%"
 
 echo.
-if not "%CMS_EXIT_CODE%"=="0" (
+if not "%TIMPLIO_EXIT_CODE%"=="0" (
   echo Une erreur a interrompu la preparation.
   echo Consultez le message ci-dessus avant de fermer cette fenetre.
 ) else (
@@ -19,4 +19,4 @@ if not "%CMS_EXIT_CODE%"=="0" (
 )
 echo.
 pause
-exit /b %CMS_EXIT_CODE%
+exit /b %TIMPLIO_EXIT_CODE%

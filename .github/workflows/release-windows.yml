@@ -53,7 +53,7 @@ jobs:
       - name: Conserver l’installateur comme artefact
         uses: actions/upload-artifact@v4
         with:
-          name: CMS-Temps-Windows-${{ github.ref_name }}
+          name: Timplio-Windows-${{ github.ref_name }}
           path: release/*.exe
           if-no-files-found: error
 
@@ -75,7 +75,7 @@ jobs:
             gh release upload "${{ github.ref_name }}" $installer.FullName --clobber
           } else {
             gh release create "${{ github.ref_name }}" $installer.FullName `
-              --title "CMS Temps ${{ github.ref_name }}" `
+              --title "Timplio ${{ github.ref_name }}" `
               --generate-notes
           }
 

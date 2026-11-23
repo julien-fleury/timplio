@@ -12,12 +12,12 @@ import { formatDate, formatEuro, formatNumber } from '../lib/format';
 export function AffaireDetailPage() {
   const id = Number(useParams().id); const navigate = useNavigate();
   const [affaire, setAffaire] = useState<AffaireAvecStats | null>(null); const [pointages, setPointages] = useState<Pointage[]>([]); const [edit, setEdit] = useState(false);
-  const load = async () => { const [a, p] = await Promise.all([window.cms.affaires.get(id), window.cms.pointages.list(id)]); setAffaire(a); setPointages(p); };
+  const load = async () => { const [a, p] = await Promise.all([window.timplio.affaires.get(id), window.timplio.pointages.list(id)]); setAffaire(a); setPointages(p); };
   useEffect(() => { void load(); }, [id]);
   if (!affaire) return <p className="text-sm text-slate-500">Chargement de l’affaire…</p>;
-  const removeAffaire = async () => { if (confirm(`Supprimer définitivement l’affaire « ${affaire.nom} » et tous ses pointages ?`)) { await window.cms.affaires.remove(id); navigate('/affaires'); } };
-  const removePointage = async (pointageId: number) => { if (confirm('Supprimer ce pointage ?')) { await window.cms.pointages.remove(pointageId); await load(); } };
-  const exportPdf = async () => { await window.cms.reportPdf(id); };
+  const removeAffaire = async () => { if (confirm(`Supprimer définitivement l’affaire « ${affaire.nom} » et tous ses pointages ?`)) { await window.timplio.affaires.remove(id); navigate('/affaires'); } };
+  const removePointage = async (pointageId: number) => { if (confirm('Supprimer ce pointage ?')) { await window.timplio.pointages.remove(pointageId); await load(); } };
+  const exportPdf = async () => { await window.timplio.reportPdf(id); };
   const stats = [
     ['Heures consommées', `${formatNumber(affaire.heuresConsommees)} h`],
     ['Montant consommé', formatEuro(affaire.montantConsomme)],

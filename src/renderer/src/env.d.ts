@@ -1,8 +1,8 @@
 /// <reference types="vite/client" />
-import type { CmsApi } from '../../shared/types';
+import type { TimplioApi } from '../../shared/types';
 
 declare global {
-  interface Window { cms: CmsApi; }
+  interface Window { timplio: TimplioApi; }
 }
 
 export {};

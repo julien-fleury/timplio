@@ -1,7 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import type { AffaireInput, Categorie, CmsApi, PointageInput } from '../shared/types.js';
+import type { AffaireInput, Categorie, PointageInput, TimplioApi } from '../shared/types.js';
 
-const api: CmsApi = {
+const api: TimplioApi = {
   affaires: {
     list: () => ipcRenderer.invoke('affaires:list'),
     get: (id) => ipcRenderer.invoke('affaires:get', id),
@@ -34,4 +34,4 @@ const api: CmsApi = {
   restore: () => ipcRenderer.invoke('database:restore'),
 };
 
-contextBridge.exposeInMainWorld('cms', api);
+contextBridge.exposeInMainWorld('timplio', api);

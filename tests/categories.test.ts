@@ -10,7 +10,7 @@ afterEach(() => { for (const file of files.splice(0)) { for (const suffix of [''
 
 describe('catégories de pointage', () => {
   it('renomme une catégorie sans perdre ses pointages et budgets', () => {
-    const file = path.join(os.tmpdir(), `cms-temps-categories-${Date.now()}.sqlite`); files.push(file);
+    const file = path.join(os.tmpdir(), `timplio-categories-${Date.now()}.sqlite`); files.push(file);
     const manager = new DatabaseManager(file);
     const service = new DataService(() => manager.db);
     const affaireId = service.createAffaire({ nom: 'Test', client: 'Client', montantVenduHt: 1000, tauxHoraireReference: 100, dateCreation: '2026-01-01', dateCloture: null, dateEcheance: null, terminee: false, commentaire: '' });
@@ -26,7 +26,7 @@ describe('catégories de pointage', () => {
   });
 
   it('exige un remplacement et transfère les données avant suppression', () => {
-    const file = path.join(os.tmpdir(), `cms-temps-categories-delete-${Date.now()}.sqlite`); files.push(file);
+    const file = path.join(os.tmpdir(), `timplio-categories-delete-${Date.now()}.sqlite`); files.push(file);
     const manager = new DatabaseManager(file);
     const service = new DataService(() => manager.db);
     const affaireId = service.createAffaire({ nom: 'Test', client: 'Client', montantVenduHt: 1000, tauxHoraireReference: 100, dateCreation: '2026-01-01', dateCloture: null, dateEcheance: null, terminee: false, commentaire: '' });

@@ -2,6 +2,7 @@ import { DatabaseSync } from 'node:sqlite';
 import fs from 'node:fs';
 import { schema, seed } from './schema.js';
 import { DATABASE_VERSION, runMigrations } from './migrations.js';
+import { BRAND } from '../../shared/branding.js';
 
 export class DatabaseManager {
   private database: DatabaseSync;
@@ -33,10 +34,10 @@ export class DatabaseManager {
   async automaticBackup(directory: string, keep = 10): Promise<string> {
     fs.mkdirSync(directory, { recursive: true });
     const date = new Date().toLocaleDateString('en-CA');
-    const destination = `${directory}/cms-temps-auto-${date}.sqlite`;
+    const destination = `${directory}/${BRAND.automaticBackupPrefix}-${date}.sqlite`;
     if (!fs.existsSync(destination)) await this.backup(destination);
     const files = fs.readdirSync(directory)
-      .filter((name) => /^cms-temps-auto-\d{4}-\d{2}-\d{2}\.sqlite$/.test(name))
+      .filter((name) => new RegExp(`^${BRAND.automaticBackupPrefix}-\\d{4}-\\d{2}-\\d{2}\\.sqlite$`).test(name))
       .sort()
       .reverse();
     for (const obsolete of files.slice(keep)) fs.unlinkSync(`${directory}/${obsolete}`);
@@ -47,7 +48,7 @@ export class DatabaseManager {
     const candidate = new DatabaseSync(source, { readOnly: true });
     try {
       const required = candidate.prepare("SELECT COUNT(*) AS count FROM sqlite_master WHERE type='table' AND name IN ('affaires', 'pointages')").get() as { count: number };
-      if (required.count !== 2) throw new Error('La sauvegarde ne contient pas le schéma CMS Temps.');
+      if (required.count !== 2) throw new Error(`La sauvegarde ne contient pas le schéma ${BRAND.name}.`);
     } finally {
       candidate.close();
     }

@@ -9,7 +9,7 @@ import { formatEuro, formatNumber, monthLabel } from '../lib/format';
 export function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [periodeCa, setPeriodeCa] = useState<'mois' | 'annees'>('mois');
-  useEffect(() => { void window.cms.dashboard().then(setData); }, []);
+  useEffect(() => { void window.timplio.dashboard().then(setData); }, []);
   if (!data) return <p className="text-sm text-slate-500">Chargement du tableau de bord…</p>;
   const caProduitTotal = data.caProduitParMois.reduce((total, row) => total + row.ca, 0);
   const heuresProductionTotal = data.caProduitParMois.reduce((total, row) => total + row.heures, 0);

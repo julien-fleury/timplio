@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { BarChart3, BriefcaseBusiness, CalendarDays, Clock3, Database, Plus, Tags } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
+import timplioLogo from '../assets/timplio-logo.png';
 
 const links = [
   { to: '/', label: 'Tableau de bord', icon: BarChart3 },
@@ -15,8 +16,9 @@ export function Layout({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-screen">
       <aside className="fixed inset-y-0 left-0 z-20 flex w-64 flex-col bg-[#14231f] px-4 py-6 text-white">
-        <div className="mb-9 px-3">
-          <div className="flex items-center gap-3"><div className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-500 font-black">CT</div><div><p className="text-lg font-bold leading-tight">CMS Temps</p><p className="text-xs text-emerald-100/60">Suivi de rentabilité</p></div></div>
+        <div className="mb-9 px-2">
+          <div className="rounded-2xl bg-white px-4 py-3"><img src={timplioLogo} alt="Timplio" className="h-auto w-full" /></div>
+          <p className="mt-2 text-center text-xs text-emerald-100/60">Suivi de rentabilité</p>
         </div>
         <nav className="space-y-1">
           {links.map(({ to, label, icon: Icon }) => <NavLink key={to} to={to} end={to === '/'} className={({ isActive }) => `flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition ${isActive ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-950/30' : 'text-slate-300 hover:bg-white/10 hover:text-white'}`}><Icon size={19} />{label}</NavLink>)}
